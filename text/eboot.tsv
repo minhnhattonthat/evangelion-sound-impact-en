@@ -1,0 +1,12 @@
+# offset(hex)	encoding	english   ("\n" = newline). Offsets are file offsets in the decrypted EBOOT (work/EBOOT.dec.elf).
+0x12b074	utf8	Rebuild of Evangelion -Sound Impact-
+0x12b0b8	utf8	Play Data
+0x12b0d5	utf8	 System File
+0x12b0f0	utf8	Delete data to free up space on the storage media?
+0x12b144	utf8	Loading failed.\nTry again?
+0x12b1a0	utf8	Deleting data failed.\nYou need at least %dKB of free space to save this game's data.\nTry again?
+0x12b260	utf8	Saving failed.\nTry again?
+0x12b2bc	utf8	Saving failed.
+0x12b2f4	utf8	Not enough free space on the storage media.\nYou need at least %dKB of free space to save this game's data.
+0x12aa98	sjis	Play time: %4dh %2dm %2ds\nSongs cleared: %2d / %2d\n
+0x12aad0	sjis	Play time: %4dh %2dm %2ds\nSongs cleared (NORMAL): %2d / %2d\nSongs cleared (HARD):   %2d / %2d\n

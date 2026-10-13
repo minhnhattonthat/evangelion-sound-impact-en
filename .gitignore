@@ -1,0 +1,14 @@
+rom/
+build/
+work/
+dist/
+release/
+tools/PPSSPP*.exe
+tools/assets/
+tools/memstick/
+tools/__pycache__/
+__pycache__/
+*.iso
+*.cso
+gfx/
+.agents/
