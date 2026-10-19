@@ -8,7 +8,7 @@ Python: `python -X utf8`. Run everything from this folder. Pillow + numpy needed
 - Redraw all English images: `python tools/gen_gfx.py [section..]` (writes `gfx/`). Sections: saveload title notice pause loading cards menu option unlock results gallery subs pic1 icon hints help expl (help pages: tools/gen_help.py)
 - Look at images: `python tools/showgim.py OUT.png <cpk>/<arc>/<NNN>_<hexoff> --new` (original | replacement); `tools/uniq_sheets.py REGEX PREFIX` = contact sheets of untranslated unique GIMs (set ALL=1 to include translated)
 - Build ISO: `python tools/build.py build/test.iso` (~45 s; EBOOT strings from `text/eboot.tsv`, subtitles from `notes/subs.tsv`)
-- QA: `python <skill>/scripts/emu.py build/test.iso --out work/qaN --route routes/to_song.txt --smoke --sheet`; states: `--save-state/--state-in`; PPSSPP is in `tools/PPSSPPWindows64.exe`, memstick `tools/memstick` (saves persist: `--clean-saves`)
+- QA: `python <skill>/scripts/emu.py build/test.iso --out work/qaN --route routes/to_song.txt --smoke --sheet`; states: `--save-state/--state-in`; QA runs PPSSPPHeadless (one install per machine, see the skill's emulator-qa.md §PPSSPP) with a fresh memstick per run (`--sav <save folder>` to start from a save); the windowed `tools/PPSSPPWindows64.exe` + `tools/memstick` is for playing and the EBOOT dump
 - Decrypted EBOOT: `work/EBOOT.dec.elf`, dumped by PPSSPP with `DumpFileTypes = 7` in `tools/memstick/PSP/SYSTEM/ppsspp.ini`
 
 ## Rulings (confirm with user, not yet asked)
