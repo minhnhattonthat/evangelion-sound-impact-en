@@ -42,6 +42,7 @@ def paragraph(img, text, box, size=12, xs=0.88, color=(255, 255, 255, 255), font
 
 def label(img, text, x, y0, y1, size=12, xs=0.94, color=(255, 255, 255, 255), font='segoe'):
     lines = text.split('\n'); pitch = size + 3; total = len(lines) * pitch; top = y0 + (y1 - y0 + 1 - total) // 2
+    xs = min(xs, (177 - x) / max(typeset.font(font, size).getlength(ln) for ln in lines))   # the panel shows x < 179 only
     for i, ln in enumerate(lines):
         typeset.text_image(0, 0, ln, font, size, color, xscale=xs, align='l', valign='t', pad=0, canvas=img, box=(x, top + i * pitch, 200, pitch))
 
@@ -81,10 +82,10 @@ def bottom_bar(img, o, labels, y0=238, y1=256, size=12, xs=0.94, font='segoe-b')
         if i + 1 < len(parts): x += p[2] + gap(i)
 
 
-BACK = 'Back to Title'
+BACK = 'Back'   # returns to the song's BACK/START/HELP menu, not the title
 HELP = {   # id suffix -> para / head / rows (y0, y1, x, text) / footer labels
     '93904': dict(para="Match the waveform's height and strike the beat the moment it overlaps the centre of the target.",
-                  rows=[(76, 85, 36, 'Beat'), (106, 123, 37, 'Move the waveform up and down')], bar=[BACK, 'Start']),
+                  rows=[(76, 85, 36, 'Beat'), (106, 123, 37, 'Move the waveform\nup and down')], bar=[BACK, 'Start']),
     'a3dd4': dict(para='Dodge obstacles by jumping as you run toward the target landing point.',
                   rows=[(60, 69, 35, 'High Jump'), (91, 100, 37, 'Long Jump')], bar=[BACK, 'Start']),
     'b42a4': dict(head='Session Mode', para="Press the indicated button as an Angel's attack comes full circle around the ring and the UN Forces will attack. Keep dealing damage for a set time to move on to Free Play Mode.",
@@ -104,7 +105,7 @@ def gen_help():
     for suffix, d in HELP.items():
         gid = f'game_select/game_select/008_{suffix}'; o = orig(gid); out = o.copy(); rs = rules(o)
         top = rs[0] - 3 if rs else 100
-        erase_white(out, (0, 11 if not d.get('head') else 24, 179, top)); y = 13
+        clear(out, (0, 11 if not d.get('head') else 24, 179, top)); y = 13   # whole paragraph area: grey anti-aliasing escapes erase_white
         if d.get('head'):
             erase_white(out, (12, 11, 179, 24))
             typeset.text_image(0, 0, d['head'], 'segoe-b', 13, (255, 255, 255, 255), xscale=0.94, align='l', valign='t', pad=0, canvas=out, box=(12, 11, 165, 16)); y = 28
@@ -133,7 +134,7 @@ def gen_expl():
     # waveform page
     o = orig(g + 'db4'); out = o.copy()
     erase_white(out, (160, 18, 242, 68)); paragraph(out, 'The waveform can move freely up and down.', (164, 20, 76, 50), size=12, xs=0.9)
-    out = inpaint(out, (28, 26, 81, 44), white_min=100); txt(out, 'Target', 30, 28, 51, 11, 0.9, 'r')
+    out = inpaint(out, (28, 26, 83, 44), white_min=100); txt(out, 'Target', 30, 28, 51, 11, 0.9, 'r')
     out = inpaint(out, (125, 90, 153, 105), white_min=100); txt(out, 'Waveform', 126, 90, 60, 10, 0.9)
     erase_white(out, (1, 112, 84, 180)); paragraph(out, "On success, the character's line appears and a hole is punched in the background.", (3, 114, 82, 90), size=11, xs=0.88)
     out = inpaint(out, (88, 122, 238, 156), white_min=120)

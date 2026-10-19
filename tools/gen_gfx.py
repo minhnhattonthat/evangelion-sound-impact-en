@@ -35,7 +35,7 @@ def bands(img, thr=40):
 
 # ---------------------------------------------------------------- sys/menu_saveload: orange prompt panels, 256x128
 SAVELOAD = {
-    '000_110d0': ('This game supports auto-save. While auto-saving, the Memory Stickâ„¢ access indicator will blink. Do not remove the media or turn off the system while it blinks.', ['Next']),
+    '000_110d0': ('This game supports auto-save. While auto-saving, the Memory Stick™ access indicator will blink. Do not remove the media or turn off the system while it blinks.', ['Next']),
     '000_195a0': ('Accessing the storage media.\nDo not turn off the system or remove the media.', []),
     '000_21a70': ('Retry saving?', ['Yes', 'No']),
     '000_29f40': ('Resume the game without saving?', ['Yes', 'No']),
@@ -221,11 +221,13 @@ def gen_cards():
         gid = f'game_select/game_select/002_{suffix}'; out = orig(gid); col = typeset.dominant(out) + (255,)
         if l1: clear(out, (0, 11, 160, 46)); serif_line(out, l1, (1, 11, 160, 34), col, 0.49, 46, 'l', 158)
         if l2: clear(out, (0, 46, 160, 73)); serif_line(out, l2, (1, 46, 160, 26), col, 0.5, 30, 'l', 158)
+        clear(out, (0, 72, 256, 84))   # small English gloss line: repeats the title now
         save(gid, out)
     for suffix, (l1, l2) in CARDS_006.items():
         gid = f'game_select/game_select/006_{suffix}'; out = orig(gid); col = typeset.dominant(out) + (255,)
         if l1: clear(out, (0, 19, 256, 64)); serif_line(out, l1, (0, 19, 256, 42), col, 0.49, 53, 'c', 236)
         if l2: clear(out, (0, 64, 256, 93)); serif_line(out, l2, (0, 64, 256, 28), col, 0.5, 30, 'c', 236)
+        clear(out, (0, 93, 256, 110))
         save(gid, out)
 
 SECTIONS['cards'] = gen_cards
@@ -249,9 +251,10 @@ def gen_option():
                                    (161, 179, 'AUTO SAVE', BLK, 70), (185, 203, 'AUTO SAVE', ORG, 70)]:
         clear(out, (0, y0 - 1, w if word != 'AUTO SAVE' else 72, y1 + 2))
         typeset.text_image(0, 0, word, 'sans-cond-b', None, col, align='l', valign='m', pad=0, max_size=24, canvas=out, box=(1, y0, 70 if word == 'AUTO SAVE' else 44, y1 - y0 + 1))
-    for (y0, y1, x0, x1, text) in [(41, 51, 81, 197, 'Adjust the BGM volume.'), (57, 67, 66, 213, 'Change the auto-save setting.'), (73, 83, 86, 190, 'Adjust the SE volume.')]:
-        clear(out, (x0 - 4, y0 - 2, x1 + 5, y1 + 3)); cx = (x0 + x1) // 2
-        typeset.text_image(0, 0, text, 'segoe-b', 12, ORG, xscale=0.92, align='c', valign='m', pad=0, canvas=out, box=(cx - 100, y0 - 2, 200, y1 - y0 + 5))
+    for box in [(88, 0, 104, 8), (88, 8, 104, 16), (88, 16, 128, 24)]: clear(out, box)   # tx_BGM / tx_SE / tx_AUTOSAVE sub-captions: repeat the labels
+    clear(out, (64, 40, 216, 88))
+    for y, text in [(40, 'Adjust the BGM volume.'), (56, 'Change the auto-save setting.'), (72, 'Adjust the SE volume.')]:   # tx_info1/3/2 sprite rects
+        typeset.text_image(0, 0, text, 'segoe-b', None, ORG, xscale=0.92, align='c', valign='m', pad=0, max_size=12, canvas=out, box=(64, y, 152, 16))
     save(gid, out)
 
 SECTIONS['option'] = gen_option
@@ -316,6 +319,28 @@ def copies(gid):
 def save_all(gid, img):
     for c in copies(gid): save(c, img)
 
+def tiny(img, text, x, top, size=7, font='sans-cond-b', col=(240, 80, 0, 255), maxw=None, align='l', tracking=0):
+    """Small lettering matched to the original pixel text: cap tops on row `top`, starting at x (or centred on x for align='c');
+    squeezed horizontally to stay within maxw."""
+    f = typeset.font(font, size); w = f.getlength(text) + tracking * len(text); xs = min(1.0, maxw / w) if maxw else 1.0
+    if align == 'c': x -= int(w * xs) // 2
+    typeset.text_image(0, 0, text, font, size, col, xscale=xs, align='l', valign='t', pad=0, tracking=tracking, canvas=img,
+                       box=(x - 2, top - f.getbbox('I')[1] - 2, 300, size + 8))
+
+def flavour(img, y):
+    """'Transmission Recorded / Recording Saved To MAGI01 Databanks' (original art: typo 'Saced'), cap tops at y and y + 6, inside x 0..111
+    (the result screen shows only a 112 px wide strip of it)."""
+    clear(img, (0, y - 1, 120, y + 13))
+    tiny(img, 'Transmission Recorded', 56, y, align='c', maxw=110); tiny(img, 'Recording Saved To MAGI01 Databanks', 56, y + 6, align='c', maxw=110)
+
+def fix_search(img):
+    """'Seach Results: Personal Data' (original 4 px art, x 59..143, rows 163..166): insert an 'r' before the 'c' at x 70 and
+    start the line 2 px further left so it still keeps a 1 px gap to both frame bars (x 55, x 146)."""
+    a = np.array(img); strip = a[162:168, 59:144].copy(); cols = [strip[:, i] for i in range(strip.shape[1])]
+    r1 = np.zeros_like(cols[0]); r1[2:5] = (240, 80, 0, 255); r2 = np.zeros_like(cols[0]); r2[2] = (240, 80, 0, 170)
+    cols[11:11] = [r1, r2, np.zeros_like(r1)]
+    a[162:168, 57:145] = np.stack(cols, 1); return Image.fromarray(a)
+
 CARD_NAMES = {   # result*/000_5988 personnel cards, keyed by the first arc that holds each variant
     'at00/result17': 'Ritsuko Akagi', 'at01/result18': 'Kozo Fuyutsuki', 'at02/result19': 'Misato Katsuragi', 'at03/result20': 'Ryoji Kaji',
     'at04/result21': 'Maya Ibuki', 'at05/result22': 'Gendo Ikari', 'at08/result25': 'Kaworu Nagisa',
@@ -325,7 +350,7 @@ def gen_results():
     ORG = (240, 80, 0, 255); BLK = (0, 0, 0, 255)
     # 000_14b8: result panel header (Song Complete / Mission Failed captions)
     gid = 'at00/result17/000_14b8'; o = orig(gid); out = o.copy()
-    clear(out, (1, 1, 78, 27)); clear(out, (142, 25, 222, 51))
+    clear(out, (1, 1, 78, 27)); clear(out, (142, 25, 226, 51))
     typeset.text_image(0, 0, 'Song Complete', 'serif-b', None, ORG, xscale=0.62, align='l', valign='m', pad=0, max_size=26, canvas=out, box=(3, 1, 76, 26))
     typeset.text_image(0, 0, 'Mission Failed', 'serif-b', None, ORG, xscale=0.62, align='l', valign='m', pad=0, max_size=26, canvas=out, box=(144, 25, 80, 25))
     save_all(gid, out)
@@ -337,6 +362,9 @@ def gen_results():
     # 004_f20: katakana glosses under SELECT TRACK / RETRY
     gid = 'at00/result17/004_f20'; o = orig(gid); out = o.copy()
     for b in [(53, 27, 112, 40), (53, 63, 112, 80), (24, 106, 51, 120), (103, 106, 130, 120)]: clear(out, b)
+    # flavour text (original art, garbled 'N ERV HQt' and too wide for the 64 px obj1 / 112 px obj2 sprites)
+    clear(out, (174, 35, 240, 48)); tiny(out, 'NERV HQ', 175, 36); tiny(out, '1st Command Center', 175, 42, maxw=56)
+    flavour(out, 120)
     save_all(gid, out)
     # personnel cards
     for arc_id, name in CARD_NAMES.items():
@@ -344,6 +372,10 @@ def gen_results():
         clear(out, (106, 11, 182, 33)); clear(out, (58, 150, 148, 163))
         typeset.text_image(0, 0, name, 'serif-b', None, ORG, xscale=0.62, align='l', valign='m', pad=0, max_size=20, canvas=out, box=(107, 11, 74, 20))
         typeset.text_image(0, 0, 'PERSONAL DATA', 'sans-cond-b', None, ORG, align='c', valign='m', pad=0, max_size=13, canvas=out, box=(60, 150, 86, 13))
+        given, family = name.split(); roman = f'{family.upper()}, {given}'   # original 'IKARI, gendou': match the heading's spelling
+        clear(out, (106, 33, 194, 46)); tiny(out, roman, 110, 34, size=11, maxw=82)
+        clear(out, (36, 202, 120, 211)); tiny(out, roman, 38, 203, size=7, font='sans-b', tracking=0.6)
+        out = fix_search(out)
         save_all(gid, out)
 
 SECTIONS['results'] = gen_results
@@ -364,6 +396,8 @@ def inpaint(img, box, white_min=170, iters=60):
         wsum = np.zeros(mask.shape); acc = np.zeros(reg.shape)
         for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
             k = np.roll(known, (dy, dx), (0, 1)); v = np.roll(cur, (dy, dx), (0, 1))
+            if dy: k[0 if dy > 0 else -1, :] = False   # no wraparound from the opposite edge
+            if dx: k[:, 0 if dx > 0 else -1] = False
             wsum += k; acc += v * k[..., None]
         fill = mask & ~known & (wsum > 0)
         cur[fill] = acc[fill] / wsum[fill][:, None]; known = known | fill
@@ -449,6 +483,7 @@ def gen_hints():
     save(gid, out)
     gid = 'game_select/save_load__bin/000_f74'; o = orig(gid); out = o.copy()
     for box in [(112 + 18, 26, 112 + 43, 39), (112 + 84, 26, 112 + 106, 39), (112 + 18, 66, 112 + 43, 79), (112 + 84, 66, 112 + 106, 79)]: clear(out, box)
+    flavour(out, 73)
     save(gid, out)
 
 SECTIONS['hints'] = gen_hints
