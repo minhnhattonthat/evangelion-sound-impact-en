@@ -14,6 +14,7 @@ Python: `python -X utf8`. Run everything from this folder. Pillow + numpy needed
 ## Rulings (confirm with user, not yet asked)
 - Names: Rebuild of Evangelion title wording, "Angel Session", "Call of Fourteen", "HEX", "Teardrop", "Number 5", "AT", Unit-01/00/02, Provisional Unit-05, The Beast. Full names, no abbreviations.
 - Japanese button layout: circle = OK, cross = cancel. Button icons in text pictures are kept from the originals.
+- Player bug reports: GitHub issues (`gh issue list --label bug`). Copy the attached save into `work/states/`, reproduce in the emulator, fix, commit with `Fixes #N`, and update the Status section.
 
 ## Status
 Done and checked in-game: help + explanation pages (game_select 008_*; the old tiny dummy page f55e4 left), save/load prompts, title logo + copyright + piracy notice, pause menu, loading, song cards (list + selected), menu/option/unlock notices, results (header, FINISHED/GAME OVER, personnel cards), gallery captions, 150 cof* subtitle lines, XMB icon/background/title, EBOOT strings, select-track hint bar.

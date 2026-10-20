@@ -7,6 +7,9 @@ Impact-*, PSP, Bandai Namco, 2010, NPJH-50457): the source text and tools that b
 your own dump of the Japanese UMD (1,142,915,072 bytes, CRC32 D8515C17). The release README lists the hashes,
 patching steps and known issues.
 
+**Found a bug?** [Report it](../../issues/new/choose): untranslated text, typos, overflow, crashes. Attaching a savestate
+helps most.
+
 ## What is translated
 - All menus, the option screen, help and explanation pages, save/load prompts, the pause menu and loading screens.
 - Song cards, unlock notices, results screens and gallery captions.
