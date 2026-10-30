@@ -10,14 +10,21 @@ patching steps and known issues.
 **Found a bug?** [Report it](../../issues/new/choose): untranslated text, typos, overflow, crashes. Attaching a savestate
 helps most.
 
-## What is translated
-- All menus, the option screen, help and explanation pages, save/load prompts, the pause menu and loading screens.
-- Song cards, unlock notices, results screens and gallery captions.
-- 150 subtitle lines in the "Call of Fourteen" songs, the title logo and the piracy notice.
-- The XMB icon, background and title, and the game's built-in text strings.
-- Names follow the Rebuild of Evangelion English wording ("Angel Session", "Call of Fourteen", "Provisional Unit-05",
-  "The Beast").
-- Text inside the videos (song title cards, credits roll) stays Japanese.
+## Translation status
+| Part | Status |
+|---|---|
+| Menus, options, help and explanation pages, save/load prompts, pause menu, loading screens | Translated |
+| Song cards, unlock notices, results screens, gallery captions | Translated (tiny 5 px detail lines on the result personnel cards left in Japanese) |
+| "Call of Fourteen" song subtitles | Translated (150 lines) |
+| Title logo, piracy notice, XMB icon/background/title, built-in text strings | Translated |
+| Text inside the videos (song title cards, credits roll) | Left in Japanese (baked into the .pmf videos) |
+| Stage art | Not checked in play (not re-surveyed after the last pass) |
+
+Names follow the Rebuild of Evangelion English wording ("Angel Session", "Call of Fourteen", "Provisional Unit-05",
+"The Beast").
+
+Known issues: two result title bars keep a stray middle-dot; the "Object Unlock Report" footer on dialogs and the
+title-menu colours are the original game's design.
 
 ## Building from source
 You need your own ISO and Python with Pillow and numpy. See `CLAUDE.md` for the commands (`python tools/unpack_all.py`,
